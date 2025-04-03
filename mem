@@ -1,0 +1,94 @@
+// Wait for the 'detailforplayregisterpage' network request and parse the JSON data
+function waitForQuestionSetRequest() {
+  const observer = new MutationObserver(() => {
+    const networkRequests = window.performance.getEntriesByType('resource');
+    
+    // Iterate through all network requests
+    networkRequests.forEach(request => {
+      if (request.name.includes('detailforplayregisterpage')) {
+        console.clear();  // Clear the console
+
+        console.log(`Request URL: ${request.name}`); // Display the request URL
+
+        // Fetch and parse the JSON from the detected URL
+        fetch(request.name)
+          .then(response => response.json())
+          .then(data => {
+            const answers = new Map();
+            // Collect answers from the question data
+            data.questions.forEach(question => {
+              question.correctAnswers.forEach(answer => {
+                answers.set(answer.toLowerCase(), question.number);
+              });
+            });
+
+            // Allow time for the page to load or the answers to appear
+            setTimeout(() => {
+              // Scan the page for answers in div elements only
+              scanPageForAnswers(answers);
+            }, 500); // Delay for 500ms to ensure content is available
+          })
+          .catch(error => {
+            console.error('Error fetching the questions:', error);
+          });
+        
+        // Stop observing after we've found the correct request
+        observer.disconnect();
+      }
+    });
+  });
+
+  // Start observing the page for new resource requests
+  observer.observe(document, { childList: true, subtree: true });
+}
+
+// Function to scan the page HTML for the answers in div elements and match them with question numbers
+function scanPageForAnswers(answers) {
+  // Select all div elements on the page
+  const divElements = document.querySelectorAll('div');
+  
+  // Iterate through each answer and see if it exists in any div elements on the page
+  answers.forEach((questionNumber, answer) => {
+    let found = false;
+
+    // Check all div elements for the correct answer
+    divElements.forEach(div => {
+      if (div.innerText && div.innerText.toLowerCase().includes(answer.toLowerCase())) {
+        found = true;
+
+        // Display the answer on the page dynamically
+        displayAnswerOnPage(questionNumber, answer);
+      }
+    });
+
+    // If answer isn't found in any div, log if needed
+    if (!found) {
+      console.log(`Answer for Question ${questionNumber}: "${answer}" not found in any div on the page.`);
+    }
+  });
+}
+
+// Function to display the current answer and request URL on the page
+function displayAnswerOnPage(questionNumber, answer) {
+  // Create a div if it doesn't exist
+  let answerDisplayDiv = document.getElementById('current-answer-display');
+  if (!answerDisplayDiv) {
+    answerDisplayDiv = document.createElement('div');
+    answerDisplayDiv.id = 'current-answer-display';
+    answerDisplayDiv.style.position = 'fixed';
+    answerDisplayDiv.style.top = '10px';
+    answerDisplayDiv.style.right = '10px';
+    answerDisplayDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    answerDisplayDiv.style.color = 'white';
+    answerDisplayDiv.style.padding = '10px';
+    answerDisplayDiv.style.borderRadius = '5px';
+    answerDisplayDiv.style.zIndex = '9999';
+    document.body.appendChild(answerDisplayDiv);
+  }
+
+  // Clear previous answer and display the new one
+  answerDisplayDiv.innerHTML = `<strong>Request URL:</strong> ${window.location.href} <br> <strong>Answer for Question ${questionNumber}:</strong> "${answer}"`;
+}
+
+// Start monitoring for the network request
+waitForQuestionSetRequest();
