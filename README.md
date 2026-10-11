@@ -1,31 +1,66 @@
-Here is a clean, professional, and well-structured README.md for the GitHub repository 'asdf':
+# Project Title: asdf
 
-**asdf**
-A Python library for parsing JSON data and storing it in memory.
+## One-line Tagline
+A Python script to parse JSON data containing questions and answers.
 
-## Features
-The `asdf` repository provides a simple way to parse JSON data using the `parse_json.py` script. The parsed data can be stored in memory for further processing, making it ideal for applications that require fast access to large datasets.
+## Architecture Overview
+The `asdf` repository is structured with a simple yet effective architecture designed for parsing JSON data. The primary components are:
 
-### Key Features
+- **parse_json.py**: A Python script responsible for loading and processing the JSON data.
+- **data.json**: A JSON file containing structured data, specifically questions and their correct answers.
+- **mem**: An empty directory that could be used for storing additional resources or temporary files in future enhancements.
 
-* Parse JSON data from files or strings
-* Store parsed data in memory for efficient retrieval
-* Supports large datasets with minimal memory footprint
+The `parse_json.py` script reads from `data.json`, extracts question numbers and their corresponding correct answers, and prints them out. This setup is ideal for applications requiring data extraction and processing from structured JSON inputs.
 
 ## Tech Stack
+- **Programming Language**: Python 3.x
+- **Libraries/Frameworks**:
+  - `json`: Built-in library for parsing JSON files.
 
-* Primary Language: Python
-* Libraries and frameworks:
-	+ None (pure Python implementation)
+## Getting Started / Setup Guide
 
-## Installation and Getting Started
+### Prerequisites
+Ensure you have Python 3.x installed on your system. You can download it from [python.org](https://www.python.org/downloads/).
 
-To get started, simply clone the repository and install the required dependencies using pip:
-```bash
-git clone https://github.com/your-username/asdf.git
-cd asdf
-pip install .
+### Installation
+1. **Clone the Repository**: 
+   ```bash
+   git clone https://github.com/yourusername/asdf.git
+   cd asdf
+   ```
+
+2. **Prepare Data**:
+   - Ensure that `data.json` is present in the root directory of the repository. This file should contain valid JSON data structured with a key named 'questions', where each question has a 'number' and 'correctAnswers'.
+
+3. **Run the Script**:
+   ```bash
+   python parse_json.py
+   ```
+
+### Example Data Structure for `data.json`
+```json
+{
+  "questions": [
+    {
+      "number": 1,
+      "correctAnswers": ["Answer A"]
+    },
+    {
+      "number": 2,
+      "correctAnswers": ["Answer B"]
+    }
+  ]
+}
 ```
-Run the `parse_json.py` script to test the library with your own JSON data.
 
-**Note:** This README is generated from the code in this repository.
+This setup will output:
+```
+Question 1: Answer A
+Question 2: Answer B
+```
+
+### Additional Notes
+- The script assumes that each question has at least one correct answer. If a question lacks correct answers, it will be skipped.
+- The `mem` directory is currently empty but can be utilized for future enhancements or to store additional resources like logs or configuration files.
+
+Feel free to extend the functionality of this script by adding more features such as error handling, data validation, or integration with other systems.
